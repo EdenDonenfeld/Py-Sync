@@ -1,0 +1,259 @@
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    font-family: 'Open Sans', sans-serif;
+    background-color: #1E2D40;
+    color: #05F2BA;
+}
+
+.app-container {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+}
+  
+.header-app {
+    padding: 20px 20px;
+    display: flex;
+    align-items: center;
+    transition: margin-left 0.3s;
+}
+  
+.header-app h1 {
+    font-size: 30px;
+    color: #05F2BA;
+}
+  
+.online-users {
+    list-style: none;
+}
+  
+.online-users li {
+    display: inline;
+    align-items: center;
+    padding: 5px;
+}
+  
+.online-users li button {
+    border-radius: 100%;
+    height: 25px;
+    width: 25px;
+    background-color: #05F2BA;
+    border: none;
+    color: #1E2D40;
+}
+  
+.content {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    grid-template-areas:
+      "editor output";
+    gap: 5px;
+    height: 100%;
+    flex: 1;
+    transition: margin-left 0.3s;
+    padding-left: 16px;
+}
+  
+.editor-container {
+    grid-area: editor;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+  
+.output-container {
+    grid-area: output;
+}
+  
+.container-title {
+    padding: 10px 10px;
+    font-size: 15px;
+}
+  
+.editor {
+    flex: 1;
+    padding: 0;
+}
+  
+.editor-title {
+    padding: 10px 10px;
+    font-size: 15px;
+}
+  
+.output {
+    padding: 10px;
+    background-color: #1E1E1E;
+    color: white;
+    height: 100%;
+    overflow-y: auto;
+    border-left: 2px solid #282828;
+}
+  
+.output-title {
+    padding: 10px 10px;
+    font-size: 15px;
+}
+  
+.run-button {
+    margin-top: 10px;
+    padding: 10px 15px;
+    background-color: #05F2BA;
+    color: #1E2D40;
+    border: none;
+    cursor: pointer;
+    font-size: 15px;
+    align-self: flex-start;
+    border-radius: 7px;
+}
+  
+.run-button:hover {
+    background-color: #03C993;
+}
+  
+.sidebar {
+    height: 100%;
+    width: 0;
+    position: fixed;
+    z-index: 1;
+    top: 0;
+    left: 0;
+    overflow-x: hidden;
+    transition: 0.3s;
+    padding-top: 60px;
+}
+  
+.sidebar a {
+    padding: 8px 8px 8px 32px;
+    text-decoration: none;
+    font-size: 25px;
+    display: block;
+    transition: 0.3s;
+    color: white;
+}
+  
+.sidebar .closebtn {
+    position: absolute;
+    top: 14px;
+    right: 25px;
+    font-size: 20px;
+    margin-left: 50px;
+}
+  
+.openbtn {
+    font-size: 20px;
+    cursor: pointer;
+    color: #05F2BA;
+    padding: 10px 15px;
+    background-color: #1E2D40;
+    border: none;
+}
+
+@media (max-width: 850px) {
+    .content {
+        grid-template-columns: 1fr;
+        grid-template-areas:
+        "editor"
+        "output";
+    }
+  
+    .output {
+        border-left: none;
+        border-top: 2px solid #282828;
+    }
+  }
+
+.header {
+    color: #05F2BA;
+    font-size: 50px;
+    margin-top: 55px;
+    margin-bottom: 5px;
+}
+
+.header-text {
+    font-size: 15px;
+}
+
+.home {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.login, .register, .room-code {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.login-info, .register-info, .room-code-info {
+    display: flex;
+    flex-direction: column;
+    padding: 20px;
+}
+
+.username, .password, .confirm-password, .room-code-input {
+    margin: 10px;
+    padding: 10px;
+    border-radius: 5px;
+    height: 50px;
+    width: 300px;
+    background-color: #2C3E50;
+    color: white;
+    border: 1.5px solid rgba(255, 255, 255, 0.1);
+}
+
+.username::placeholder, .password::placeholder, .confirm-password::placeholder, .room-code-input::placeholder {
+    color: rgba(255, 255, 255, 0.4);
+    font-size: 15px;
+}
+
+.join, .login-btn, .register-btn {
+    margin: 10px;
+    padding: 10px;
+    border-radius: 5px;
+    height: 50px;
+    width: 300px;
+    background-color: #05F2BA;
+    color: #2C3E50;
+    font-size: 15px;
+    text-align: center;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.login-btn, .register-btn {
+    background-color: #2C3E50;
+    color: rgba(255, 255, 255, 0.7);
+}
+
+.login-btn:hover, .register-btn:hover {
+    cursor: pointer;
+    color: #05F2BA;
+    border: 1px solid #05F2BA;
+}
+
+.btns {
+    display: flex;
+    flex-direction: column;
+    padding: 20px;
+}
+
+.join:hover {
+    cursor: pointer;
+}
+
+.register-text, .login-text, .generate-room-code-text {
+    border: none;
+    background-color: rgba(0, 0, 0, 0);
+    margin: 15px;
+    color: rgba(255, 255, 255, 0.55);
+    font-size: 15px;
+    text-decoration: underline;
+}
+
+.register-text:hover, .login-text:hover, .generate-room-code-text:hover {
+    cursor: pointer;
+}

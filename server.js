@@ -48,6 +48,20 @@ const isAuthenticated = (req, res, next) => {
     }
 }
 
+app.get('/room-code', isAuthenticated, (req, res) => {
+  res.sendFile(path.join(__dirname + '/client/build/index.html'));
+});
+
+app.get('/room/:roomCode', isAuthenticated, (req, res) => {
+  const user = req.session.user && req.session.user.id;
+
+  if (!user) {
+      return res.status(401).json({ success: false, message: 'Unauthorized' });
+  }
+
+  res.sendFile(path.join(__dirname + '/client/build/index.html'));
+});
+
 app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname + '/client/build/index.html'));
 });

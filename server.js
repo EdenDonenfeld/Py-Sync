@@ -6,9 +6,27 @@ const path = require('path');
 const bodyParser = require('body-parser');
 const { spawn } = require('child_process');
 const fs = require('fs');
+const http = require('http');
+const socketIo = require('socket.io');
 
 const app = express();
 const port = 3000;
+
+const server = http.createServer(app);
+const io = socketIo(server);
+
+io.on('connection', (socket) => {
+    console.log('A user connected');
+
+    socket.on('code-change', (data) => {
+        console.log('code-change event received: ', data);
+        socket.broadcast.emit('code-change', data);
+    });
+
+    socket.on('disconnect', () => {
+        console.log('A user disconnected');
+    });
+});
 
 const url = 'mongodb://localhost:27017';
 const dbName = 'Authentication';
@@ -255,6 +273,6 @@ app.post('/run-code', (req, res) => {
 });
 
 
-app.listen(port, () => {
+server.listen(port, () => {
     console.log(`Server listening at http://localhost:${port}/`);
 });

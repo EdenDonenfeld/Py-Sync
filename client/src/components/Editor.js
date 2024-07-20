@@ -1,8 +1,11 @@
 // src/components/Editor.js
-
-import React, { useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import MonacoEditor from '@monaco-editor/react';
+import { editor } from 'monaco-editor';
+import io from 'socket.io-client';
 import './Style.css';
+
+const socket = io('http://localhost:3000');
 
 function Editor() {
     const editorRef = useRef(null);
@@ -16,7 +19,6 @@ function Editor() {
   
       console.log(`Code: ${code}`);
   
-      // Send the code to the server
       const response = await fetch('/run-code', {
         method: 'POST',
         headers: {
@@ -30,16 +32,6 @@ function Editor() {
       setOutput(data.output);
     }
   
-    function cleanString(input) {
-      // Remove non-printable characters using a regular expression
-      const cleanedString = input.replace(/[^\x20-\x7E]/g, ' ');
-  
-      // Replace the escaped newline sequence with an actual newline
-      const finalString = cleanedString.replace(/\\r\\n/g, '\r\n');
-  
-      return finalString;
-    }
-  
     const openNav = () => {
       document.getElementById("mySidebar").style.width = "250px";
       document.querySelector(".header-app").style.marginLeft = "250px";
@@ -50,6 +42,41 @@ function Editor() {
       document.getElementById("mySidebar").style.width = "0";
       document.querySelector(".header-app").style.marginLeft = "0";
       document.querySelector(".content").style.marginLeft = "0";
+    };
+
+    useEffect(() => {
+      socket.on('connect', () => {
+          console.log('Connected to WebSocket server');
+      });
+
+      socket.on('code-change', (data) => {
+          console.log('code-change event received in client: ', data);
+          if (editorRef.current) {
+            editorRef.current.setValue(data);
+          } else {
+              console.log('Editor reference is null');
+          }
+      });
+
+      socket.on('disconnect', () => {
+          console.log('Disconnected from WebSocket server');
+      });
+
+      return () => {
+          socket.off('code-change');
+          socket.off('connect');
+          socket.off('disconnect');
+      };
+    }, []);
+
+    const handleChange = (newValue) => {
+        console.log('handleChange: ', newValue);
+        socket.emit('code-change', newValue);
+    };
+
+    const editorDidMount = (editor) => {
+      console.log('Editor mounted:', editor);
+      editorRef.current = editor;
     };
   
     return (
@@ -78,7 +105,8 @@ function Editor() {
               defaultLanguage="python"
               theme="vs-dark"
               className="editor"
-              editorDidMount={(editor) => (editorRef.current = editor)}
+              onChange={handleChange}
+              editorDidMount={editorDidMount}
               options={{
                 fontFamily: 'Fira Code, monospace',
                 fontSize: 16,

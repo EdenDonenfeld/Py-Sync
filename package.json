@@ -14,7 +14,8 @@
         "express-session": "^1.18.0",
         "fs": "^0.0.1-security",
         "mongodb": "^6.8.0",
-        "path": "^0.12.7"
+        "path": "^0.12.7",
+        "socket.io": "^4.7.5"
     },
     "engines": {
         "node": "20.x"

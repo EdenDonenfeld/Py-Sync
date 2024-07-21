@@ -257,3 +257,10 @@ body {
 .register-text:hover, .login-text:hover, .generate-room-code-text:hover {
     cursor: pointer;
 }
+
+.error-message {
+    color: coral;
+    margin-top: 10px;
+    text-align: center;
+    font-size: 15px;
+}

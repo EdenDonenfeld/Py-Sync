@@ -6,6 +6,7 @@ import './Style.css';
 function Login() {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
+    const [errorMessage, setErrorMessage] = useState('');
 
     const usernameRef = useRef(null);
     const passwordRef = useRef(null);
@@ -14,9 +15,10 @@ function Login() {
         const username = usernameRef.current.value;
         const password = passwordRef.current.value;
 
-        console.log(usernameRef.current)
-        console.log("Username: ", username);
-        console.log("Password: ", password);
+        if (!username || !password) {
+            setErrorMessage('Username and password are required');
+            return;
+        }
 
         const saltResponse = await fetch('/get-salt', {
             method: 'POST',
@@ -28,11 +30,8 @@ function Login() {
         
         const { salt } = await saltResponse.json();
 
-        console.log("SALT: ", salt);
-
         if (salt) {
             const hashedPassword = await hashPassword(password, salt);
-            console.log("HASHED PASSWORD: ", hashedPassword);
             const response = await fetch('/login', {
                 method: 'POST',
                 headers: {
@@ -42,15 +41,14 @@ function Login() {
             });
 
             const data = await response.json();
-            console.log("DATA: ", data);
 
             if (data.success) {
                 window.location.href = '/room-code';
             } else {
-                console.error('Login failed: ', data.message);
+                setErrorMessage(data.message);
             }
         } else {
-            console.error('User not found');
+            setErrorMessage('User not found');
         }
     };
 
@@ -78,6 +76,7 @@ function Login() {
             <form class="login-info" action="/login" method="post">
                 <input ref={usernameRef} class="username" type="text" name="username" placeholder="Username" required />
                 <input ref={passwordRef} class="password" type="password" name="password" placeholder="Password" required />
+                {errorMessage && <p className="error-message">{errorMessage}</p>}
                 <button type="button" class="register-text" onClick={registerButton}>Don't have an account? Register</button>
                 <button class="join" type="submit" onClick={joinButton}>Join</button>
             </form>

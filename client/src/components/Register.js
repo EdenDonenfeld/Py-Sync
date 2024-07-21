@@ -6,6 +6,7 @@ function Register() {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
+    const [errorMessage, setErrorMessage] = useState('');
 
     const usernameRef = useRef(null);
     const passwordRef = useRef(null);
@@ -44,12 +45,12 @@ function Register() {
 
         const error = checkUsernameAndPassword(username, password);
         if (error) {
-            console.error(error);
+            setErrorMessage(error);
             return NaN;
         }
 
         if (password !== confirmPassword) {
-            console.error('Passwords do not match');
+            setErrorMessage('Passwords do not match');
             return NaN;
         }
 
@@ -83,6 +84,10 @@ function Register() {
                 if (data.success) {
                     window.location.href = '/login';
                 }
+                else {
+                    setErrorMessage(data.message);
+                    // securiry problem - user already exists, but we don't want to tell the user that
+                }
             }
         } catch (error) {
             console.error('Error:', error);
@@ -98,6 +103,7 @@ function Register() {
                 <input ref={usernameRef}class="username" type="text" name="username" placeholder="Username" required />
                 <input ref={passwordRef} class="password" type="password" name="password" placeholder="Password" required />
                 <input ref={confirmPasswordRef} class="confirm-password" type="password" name="confirm-password" placeholder="Confirm Password" required />
+                {errorMessage && <p className="error-message">{errorMessage}</p>}
                 <button type="button" class="login-text" onClick={loginButton}>Have an account? Login</button>
                 <button class="join" type="submit" onClick={joinButton}>Join</button>
             </form>

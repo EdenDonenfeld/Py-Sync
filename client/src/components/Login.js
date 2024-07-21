@@ -14,6 +14,7 @@ function Login() {
         const username = usernameRef.current.value;
         const password = passwordRef.current.value;
 
+        console.log(usernameRef.current)
         console.log("Username: ", username);
         console.log("Password: ", password);
 

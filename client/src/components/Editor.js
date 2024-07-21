@@ -1,7 +1,6 @@
 // src/components/Editor.js
 import React, { useEffect, useRef, useState } from 'react';
 import MonacoEditor from '@monaco-editor/react';
-import { editor } from 'monaco-editor';
 import io from 'socket.io-client';
 import './Style.css';
 
@@ -9,6 +8,8 @@ const socket = io('http://localhost:3000');
 
 function Editor() {
     const editorRef = useRef(null);
+    
+    const [codeEditor, setCodeEditor] = useState('');
     const [output, setOutput] = useState('');
   
     const runCode = async () => {
@@ -51,6 +52,7 @@ function Editor() {
 
       socket.on('code-change', (data) => {
           console.log('code-change event received in client: ', data);
+          setCodeEditor(data);
           if (editorRef.current) {
             editorRef.current.setValue(data);
           } else {
@@ -70,15 +72,15 @@ function Editor() {
     }, []);
 
     const handleChange = (newValue) => {
-        console.log('handleChange: ', newValue);
-        socket.emit('code-change', newValue);
-    };
+      console.log('handleChange: ', newValue);
+      socket.emit('code-change', newValue);
+  };
 
-    const editorDidMount = (editor) => {
-      console.log('Editor mounted:', editor);
-      editorRef.current = editor;
-    };
-  
+  const editorDidMount = (editor) => {
+    console.log('Editor mounted:', editor);
+    editorRef.current = editor;
+  };
+
     return (
       <div className="app-container">
         <div id="mySidebar" className="sidebar">
@@ -101,6 +103,7 @@ function Editor() {
           <div className="editor-container">
             <div className="editor-title">name.py</div>
             <MonacoEditor
+              ref={editorRef}
               height="80vh"
               defaultLanguage="python"
               theme="vs-dark"
@@ -111,6 +114,7 @@ function Editor() {
                 fontFamily: 'Fira Code, monospace',
                 fontSize: 16,
               }}
+              value={codeEditor}
             />
             <button className="run-button" onClick={runCode}>Run</button>
           </div>

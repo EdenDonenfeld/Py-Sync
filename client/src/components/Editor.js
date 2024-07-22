@@ -51,13 +51,7 @@ function Editor() {
       });
 
       socket.on('code-change', (data) => {
-          console.log('code-change event received in client: ', data);
           setCodeEditor(data);
-          if (editorRef.current) {
-            editorRef.current.setValue(data);
-          } else {
-              console.log('Editor reference is null');
-          }
       });
 
       socket.on('disconnect', () => {
@@ -72,7 +66,6 @@ function Editor() {
     }, []);
 
     const handleChange = (newValue) => {
-      console.log('handleChange: ', newValue);
       socket.emit('code-change', newValue);
   };
 

@@ -10,5 +10,5 @@ TODO list:
 6. Show list of online users, first letter, hover revel the username
 7. Save for each room, the code. So when the room is reopened, the code remains.
 8. Delete the side bar in Editor page, and add log-out option.
-9. Add error messages.
+X - 9. Add error messages - DONE
 10. Add rate limit for security reasons.

@@ -19,7 +19,6 @@ io.on('connection', (socket) => {
     console.log('A user connected');
 
     socket.on('code-change', (data) => {
-        console.log('code-change event received: ', data);
         socket.broadcast.emit('code-change', data);
     });
 

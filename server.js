@@ -143,9 +143,6 @@ app.post('/check-room-joining/:roomCode', async (req, res) => {
 app.post('/add-to-room/:roomCode', async (req, res) => {
   const { roomCode } = req.params;
   const user = req.session.user && req.session.user.id;
-  if (fileNameValue !== "") {
-    fileNameValue = req.body.fileName;
-  }
   const roomPassword = req.body.roomPassword;
 
   if (!user) {
@@ -164,6 +161,7 @@ app.post('/add-to-room/:roomCode', async (req, res) => {
       if (length === 6) {
           if (room) {
               // Room exists, add user if not already present
+              fileNameValue = room.fileNameValue;
               if (!room.users.includes(user)) {
                   await roomsCollection.updateOne(
                       { roomCode },
@@ -172,8 +170,10 @@ app.post('/add-to-room/:roomCode', async (req, res) => {
               }
           } else {
               // Room does not exist, create it and add the user as admin, users list is empty
-                await roomsCollection.insertOne({ roomCode, admin: user, users: [], fileNameValue, roomPassword });
+              fileNameValue = req.body.fileName;
+              await roomsCollection.insertOne({ roomCode, admin: user, users: [], fileNameValue, roomPassword });
           }
+          io.emit('file-name', fileNameValue); // Emit the file name to all clients
           res.json({ success: true });
       } else {
           res.json({ success: false, message: 'Invalid room code length' });

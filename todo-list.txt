@@ -1,16 +1,16 @@
 TODO list: 
-1. Change Room page to : Create Room and Join Room
-2. In Create Room, the user opens a new room (check if room is available),
+X - ***DONE*** - 1. Change Room page to : Create Room and Join Room
+X - ***DONE*** - 2. In Create Room, the user opens a new room (check if room is available),
     the user becomes the admin, and room-code is created with room-password. file name is chosen.
-    In Rooms db, a room is created that way, admin is the user created the room. users list is empty.
-3. In Join Room, the user enters the room-code and room-password and enters the room
+    In Rooms db, a room is created that way, admin is the user created the room. users list is empty
+X - ***DONE*** - 3. In Join Room, the user enters the room-code and room-password and enters the room
     In Rooms db, the user joining is being added to the users list.
 4. Status of user should be saved - online, offline.
 5. Show each of the users' cursor in realtime, each user has a different color
 6. Show list of online users, first letter, hover revel the username
 7. Save for each room, the code. So when the room is reopened, the code remains.
-8. Delete the side bar in Editor page, and add log-out option.
-X - 9. Add error messages - DONE
+8. Delete the side bar in Editor page and add log-out option.
+X - ***DONE*** - 9. Add error messages
 10. Add rate limit for security reasons.
 
 Main Room Code page :

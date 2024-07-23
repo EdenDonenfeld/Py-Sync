@@ -126,32 +126,6 @@ body {
     padding-top: 60px;
 }
   
-.sidebar a {
-    padding: 8px 8px 8px 32px;
-    text-decoration: none;
-    font-size: 25px;
-    display: block;
-    transition: 0.3s;
-    color: white;
-}
-  
-.sidebar .closebtn {
-    position: absolute;
-    top: 14px;
-    right: 25px;
-    font-size: 20px;
-    margin-left: 50px;
-}
-  
-.openbtn {
-    font-size: 20px;
-    cursor: pointer;
-    color: #05F2BA;
-    padding: 10px 15px;
-    background-color: #1E2D40;
-    border: none;
-}
-
 @media (max-width: 850px) {
     .content {
         grid-template-columns: 1fr;

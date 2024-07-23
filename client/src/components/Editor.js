@@ -33,18 +33,6 @@ function Editor() {
       console.log("Data: ", data)
       setOutput(data.output);
     }
-  
-    const openNav = () => {
-      document.getElementById("mySidebar").style.width = "250px";
-      document.querySelector(".header-app").style.marginLeft = "250px";
-      document.querySelector(".content").style.marginLeft = "250px";
-    };
-  
-    const closeNav = () => {
-      document.getElementById("mySidebar").style.width = "0";
-      document.querySelector(".header-app").style.marginLeft = "0";
-      document.querySelector(".content").style.marginLeft = "0";
-    };
 
     useEffect(() => {
       socket.on('connect', () => {
@@ -71,7 +59,7 @@ function Editor() {
       };
     }, []);
 
-    const handleChange = (newValue) => {
+  const handleChange = (newValue) => {
       socket.emit('code-change', newValue);
   };
 
@@ -82,15 +70,7 @@ function Editor() {
 
     return (
       <div className="app-container">
-        <div id="mySidebar" className="sidebar">
-          <a href="javascript:void(0)" className="closebtn" onClick={closeNav}>x</a>
-          <a href="#">About</a>
-          <a href="#">Services</a>
-          <a href="#">Clients</a>
-          <a href="#">Contact</a>
-        </div>
         <div className="header-app">
-          <button className="openbtn" onClick={openNav}>☰</button>
           <h1>Collaborative Python Editor</h1>
           <ul className="online-users">
             <li><button>A</button></li>

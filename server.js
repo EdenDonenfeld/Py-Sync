@@ -107,11 +107,45 @@ app.post('/check-room/:roomCode', async (req, res) => {
   }
 });
 
+// Check room availability and password when joining
+app.post('/check-room-joining/:roomCode', async (req, res) => {
+    const { roomCode } = req.params;
+    const roomPassword = req.body.roomPassword;
+    
+    try {
+        const client = new MongoClient(url);
+        await client.connect();
+        const db = client.db(dbName);
+        const roomsCollection = db.collection('Rooms');
+    
+        const room = await roomsCollection.findOne({ roomCode });
+    
+        if (room) {
+            // add user to room if password is correct
+            if (room.roomPassword === roomPassword) {
+                res.json({ roomAvailable: true, password: true });
+            } else {
+                res.json({ roomAvailable : true, password: false });
+            }
+        } else {
+            res.json({ roomAvailable: false, password: false });
+        }
+    
+        client.close();
+    } catch (error) {
+        console.error('Error:', error);
+        res.status(500).json({ success: false, message: 'Internal server error' });
+    }
+    }
+);
+
 // Create room and add user when joining
 app.post('/add-to-room/:roomCode', async (req, res) => {
   const { roomCode } = req.params;
   const user = req.session.user && req.session.user.id;
-  fileNameValue = req.body.fileName;
+  if (fileNameValue !== "") {
+    fileNameValue = req.body.fileName;
+  }
   const roomPassword = req.body.roomPassword;
 
   if (!user) {

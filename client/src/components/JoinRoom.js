@@ -3,36 +3,37 @@ import './Style.css';
 
 function JoinRoom() {
     const [roomCode, setRoomCode] = useState('');
+    const [roomPassword, setRoomPassword] = useState('');
     const [errorMessage, setErrorMessage] = useState('');
 
     const roomCodeInputRef = useRef(null);
+    const roomPasswordInputRef = useRef(null);
 
     const checkRoomCode = async (roomCode) => {
         try {
-            const response = await fetch(`/check-room/${roomCode}`, {
+            const response = await fetch(`/check-room-joining/${roomCode}`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
-                }
+                },
+                body: JSON.stringify({ roomPassword })
             });
             const data = await response.json();
-            console.log(data.roomAvailable);
-            return data.roomAvailable;
+            console.log('Check room code response:', data);
+            
+            if (!data.roomAvailable) {
+                setErrorMessage('Room code does not exist');
+                return false;
+            }
+            else if (!data.password) {
+                setErrorMessage('Incorrect password');
+                return false;
+            }
+            return true;
         } catch (error) {
             console.error('Error:', error);
             return false;
         }
-    };
-
-    const generateRoomCode = async () => {
-        let flag = false;
-        let generatedRoomCode;
-        while (!flag) {
-            generatedRoomCode = Math.floor(Math.random() * 1000000).toString().padStart(6, '0'); // Ensure 6 digits
-            flag = await checkRoomCode(generatedRoomCode);
-            if (!flag) break; // If room is not found, we can use this code
-        }
-        return generatedRoomCode;
     };
 
     useEffect(() => {
@@ -52,25 +53,31 @@ function JoinRoom() {
         };
     }, []);
 
-    const handleGenerateButtonClick = async () => {
-        const generatedRoomCode = await generateRoomCode();
-        console.log(`Room Code: ${generatedRoomCode}`);
-        setRoomCode(generatedRoomCode);
-        roomCodeInputRef.current.value = generatedRoomCode; // Update the input field with the new room code
-    };
-
     const handleJoinButtonClick = async (event) => {
+        event.preventDefault();
         if (roomCode.length === 0) {
             setErrorMessage('Room code must be 6 digits');
             return;
         }
-        event.preventDefault();
+
+        if (roomPassword.length === 0) {
+            setErrorMessage('Room password must not be empty');
+            return;
+        }
+
+        let flag = await checkRoomCode(roomCode);
+
+        if (!flag) {
+            return;
+        }
+
         try {
-            const response = await fetch(`/join-room/${roomCode}`, {
+            const response = await fetch(`/add-to-room/${roomCode}`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
-                }
+                },
+                body: JSON.stringify({ fileName: "", roomPassword })
             });
             const data = await response.json();
             console.log('Join room response:', data);
@@ -100,14 +107,16 @@ function JoinRoom() {
                     onChange={(e) => setRoomCode(e.target.value)}
                     required
                 />
-                <button
-                    className="generate-room-code-text"
-                    type="button"
-                    id="gen-room-code"
-                    onClick={handleGenerateButtonClick}
-                >
-                    Generate Room Code
-                </button>
+                <input
+                    ref={roomPasswordInputRef}
+                    className="room-password-input"
+                    type="text"
+                    name="room-password"
+                    placeholder="Room password"
+                    value={roomPassword}
+                    onChange={(e) => setRoomPassword(e.target.value)}
+                    required
+                />
                 {errorMessage && <p className="error-message">{errorMessage}</p>}
                 <button
                     className="join"

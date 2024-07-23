@@ -14,16 +14,18 @@ const port = 3000;
 
 const server = http.createServer(app);
 const io = socketIo(server);
+let fileNameValue = "";
 
 io.on('connection', (socket) => {
-    console.log('A user connected');
 
     socket.on('code-change', (data) => {
         socket.broadcast.emit('code-change', data);
     });
 
+    socket.emit('file-name', fileNameValue);
+
     socket.on('disconnect', () => {
-        console.log('A user disconnected');
+        //
     });
 });
 
@@ -96,7 +98,7 @@ app.post('/check-room/:roomCode', async (req, res) => {
       const room = await roomsCollection.findOne({ roomCode });
       const length = roomCode.length;
       
-      res.json({ roomAvailable: room && length === 6 });
+      res.json({ roomAvailable: (room == null && length === 6) });
 
       client.close();
   } catch (error) {
@@ -106,9 +108,11 @@ app.post('/check-room/:roomCode', async (req, res) => {
 });
 
 // Create room and add user when joining
-app.post('/join-room/:roomCode', async (req, res) => {
+app.post('/add-to-room/:roomCode', async (req, res) => {
   const { roomCode } = req.params;
   const user = req.session.user && req.session.user.id;
+  fileNameValue = req.body.fileName;
+  const roomPassword = req.body.roomPassword;
 
   if (!user) {
       return res.status(401).json({ success: false, message: 'Unauthorized' });
@@ -133,8 +137,8 @@ app.post('/join-room/:roomCode', async (req, res) => {
                   );
               }
           } else {
-              // Room does not exist, create it and add the user
-              await roomsCollection.insertOne({ roomCode, users: [user] });
+              // Room does not exist, create it and add the user as admin, users list is empty
+                await roomsCollection.insertOne({ roomCode, admin: user, users: [], fileNameValue, roomPassword });
           }
           res.json({ success: true });
       } else {
@@ -146,6 +150,12 @@ app.post('/join-room/:roomCode', async (req, res) => {
       console.error('Error:', error);
       res.status(500).json({ success: false, message: 'Internal server error' });
   }
+});
+
+
+// Send fileName to client
+app.get('/get-file-name', (req, res) => {
+    res.json({ fileName });
 });
 
 app.post('/register', async (req, res) => {

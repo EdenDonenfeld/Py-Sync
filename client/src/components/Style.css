@@ -195,7 +195,7 @@ body {
     padding: 20px;
 }
 
-.username, .password, .confirm-password, .room-code-input {
+.username, .password, .confirm-password, .room-code-input, .file-name-input, .room-password-input {
     margin: 10px;
     padding: 10px;
     border-radius: 5px;
@@ -206,12 +206,12 @@ body {
     border: 1.5px solid rgba(255, 255, 255, 0.1);
 }
 
-.username::placeholder, .password::placeholder, .confirm-password::placeholder, .room-code-input::placeholder {
+.username::placeholder, .password::placeholder, .confirm-password::placeholder, .room-code-input::placeholder, .file-name-input::placeholder, .room-password-input::placeholder {
     color: rgba(255, 255, 255, 0.4);
     font-size: 15px;
 }
 
-.join, .login-btn, .register-btn {
+.join, .create, .login-btn, .register-btn {
     margin: 10px;
     padding: 10px;
     border-radius: 5px;
@@ -222,6 +222,14 @@ body {
     font-size: 15px;
     text-align: center;
     border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.create-room {
+    margin-top: 20px;
+}
+
+.create-room, .join-room {
+    border: 1.5px solid rgba(255, 255, 255, 0.1);
 }
 
 .login-btn, .register-btn {
@@ -241,7 +249,7 @@ body {
     padding: 20px;
 }
 
-.join:hover {
+.join:hover, .create:hover {
     cursor: pointer;
 }
 

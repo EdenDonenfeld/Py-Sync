@@ -11,6 +11,7 @@ function Editor() {
     
     const [codeEditor, setCodeEditor] = useState('');
     const [output, setOutput] = useState('');
+    const [fileName, setFileName] = useState('');
   
     const runCode = async () => {
       let code = document.querySelector('.editor').innerText;
@@ -54,12 +55,17 @@ function Editor() {
           setCodeEditor(data);
       });
 
+      socket.on('file-name', (fileName) => {
+          setFileName(fileName + ".py");
+      });
+
       socket.on('disconnect', () => {
           console.log('Disconnected from WebSocket server');
       });
 
       return () => {
           socket.off('code-change');
+          socket.off('file-name');
           socket.off('connect');
           socket.off('disconnect');
       };
@@ -94,7 +100,7 @@ function Editor() {
         </div>
         <div className="content">
           <div className="editor-container">
-            <div className="editor-title">name.py</div>
+            <div className="editor-title">{fileName}</div>
             <MonacoEditor
               ref={editorRef}
               height="80vh"

@@ -12,3 +12,18 @@ TODO list:
 8. Delete the side bar in Editor page, and add log-out option.
 X - 9. Add error messages - DONE
 10. Add rate limit for security reasons.
+
+Main Room Code page :
+create room button
+join room button
+
+Create Room page :
+file name input
+room code input
+room password input - generated
+create room button
+
+Join Room page :
+room code input
+room password input
+join room button

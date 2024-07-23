@@ -1,7 +1,7 @@
 import React, { useRef, useEffect, useState } from 'react';
 import './Style.css';
 
-function RoomCode() {
+function JoinRoom() {
     const [roomCode, setRoomCode] = useState('');
     const [errorMessage, setErrorMessage] = useState('');
 
@@ -121,4 +121,4 @@ function RoomCode() {
     );
 }
 
-export default RoomCode;
+export default JoinRoom;

@@ -17,7 +17,10 @@ body {
   
 .header-app {
     padding: 20px 20px;
-    display: flex;
+    display: grid;
+    grid-template-columns: 4fr 2fr 1fr;
+    grid-template-areas:
+      "title users log-out";
     align-items: center;
     transition: margin-left 0.3s;
 }
@@ -25,10 +28,14 @@ body {
 .header-app h1 {
     font-size: 30px;
     color: #05F2BA;
+    grid-area: title;
 }
   
 .online-users {
     list-style: none;
+    justify-self: flex-end;
+    margin-right: 15px;
+    grid-area: users;
 }
   
 .online-users li {
@@ -44,6 +51,23 @@ body {
     background-color: #05F2BA;
     border: none;
     color: #1E2D40;
+}
+
+.log-out {
+    padding: 7px 10px;
+    background-color: #05F2BA;
+    color: #1E2D40;
+    border: none;
+    cursor: pointer;
+    font-size: 12px;
+    justify-self: flex-end;
+    border-radius: 7px;
+    width: fit-content;
+    grid-area: log-out;
+}
+  
+.log-out:hover {
+    background-color: #03C993;
 }
   
 .content {

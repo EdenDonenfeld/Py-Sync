@@ -34,6 +34,19 @@ function Editor() {
       setOutput(data.output);
     }
 
+    const logOut = async () => {
+      console.log("Logging out");
+      // const response = await fetch('/logout', {
+      //   method: 'POST',
+      //   headers: {
+      //     'Content-Type': 'application/json',
+      //   },
+      // });
+      // const data = await response.json();
+      // console.log(data);
+      // window.location.href = '/';
+    }
+
     useEffect(() => {
       socket.on('connect', () => {
           console.log('Connected to WebSocket server');
@@ -77,6 +90,7 @@ function Editor() {
             <li><button>S</button></li>
             <li><button>T</button></li>
           </ul>
+          <button class="log-out" onClick={logOut}>Log out</button>
         </div>
         <div className="content">
           <div className="editor-container">

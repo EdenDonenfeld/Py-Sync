@@ -2,12 +2,14 @@
 import React, { useEffect, useRef, useState } from 'react';
 import MonacoEditor from '@monaco-editor/react';
 import io from 'socket.io-client';
+import { useParams } from 'react-router-dom';
 import './Style.css';
 
 const socket = io('http://localhost:3000');
 
 function Editor() {
     const editorRef = useRef(null);
+    const { roomCode } = useParams();
     
     const [codeEditor, setCodeEditor] = useState('');
     const [output, setOutput] = useState('');
@@ -35,16 +37,21 @@ function Editor() {
     }
 
     const logOut = async () => {
-      console.log("Logging out");
-      // const response = await fetch('/logout', {
-      //   method: 'POST',
-      //   headers: {
-      //     'Content-Type': 'application/json',
-      //   },
-      // });
-      // const data = await response.json();
-      // console.log(data);
-      // window.location.href = '/';
+      const response = await fetch('/logout', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ roomCode }),
+      });
+      const data = await response.json();
+      if (data.success) {
+        console.log("Logged out successfully");
+        window.location.href = '/login';
+      }
+      else {
+        console.log("Error logging out");
+      }
     }
 
     useEffect(() => {

@@ -22,6 +22,8 @@ io.on('connection', (socket) => {
         socket.broadcast.emit('code-change', data);
     });
 
+    socket.emit('online-users', )
+
     socket.emit('file-name', fileNameValue);
 
     socket.on('disconnect', () => {
@@ -65,6 +67,17 @@ const isAuthenticated = (req, res, next) => {
     } else {
         res.status(401).json({ success: false, message: 'Unauthorized' });
     }
+}
+
+const getOnlineUsers = async (roomCode) => {
+    const client = new MongoClient(url);
+    await client.connect();
+    const db = client.db(dbName);
+    const roomsCollection = db.collection('Rooms');
+    const room = await roomsCollection.findOne({ roomCode });
+    const users = room.users;
+    client.close();
+    return users;
 }
 
 app.get('/room-code', isAuthenticated, (req, res) => {
@@ -186,12 +199,6 @@ app.post('/add-to-room/:roomCode', async (req, res) => {
   }
 });
 
-
-// Send fileName to client
-app.get('/get-file-name', (req, res) => {
-    res.json({ fileName });
-});
-
 app.post('/register', async (req, res) => {
     const { username, hashedPassword, salt } = req.body;
 
@@ -262,7 +269,6 @@ app.post('/login', async (req, res) => {
             res.json({ success: false, message: 'User does not exist' });
         } else {
             if (user.hashedPassword === hashedPassword) {
-                console.log("here")
                 req.session.user = { id: user._id, username: user.username };
                 console.log(req.session.user)
                 res.json({ success: true, message: 'User logged in successfully' });
@@ -270,6 +276,35 @@ app.post('/login', async (req, res) => {
                 res.json({ success: false, message: 'Invalid password' });
             }
         }
+
+        client.close();
+    } catch (error) {
+        console.error('Error:', error);
+        res.status(500).json({ success: false, message: 'Internal server error' });
+    }
+});
+
+// logout and remove user from given roomCode
+app.post('/logout', async (req, res) => {
+    const user = req.session.user && req.session.user.id;
+    const roomCode = req.body.roomCode;
+
+    if (!user) {
+        return res.status(401).json({ success: false, message: 'Unauthorized' });
+    }
+
+    try {
+        const client = new MongoClient(url);
+        await client.connect();
+        const db = client.db(dbName);
+        const roomsCollection = db.collection('Rooms');
+
+        await roomsCollection.updateOne(
+            { roomCode },
+            { $pull: { users: user } }
+        );
+
+        res.json({ success: true });
 
         client.close();
     } catch (error) {

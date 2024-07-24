@@ -36,6 +36,7 @@ function Editor() {
       const data = await response.json();
       console.log("Data: ", data)
       setOutput(data.output);
+      await saveCode();
     }
 
     const logOut = async () => {
@@ -156,7 +157,10 @@ function Editor() {
         </div>
         <div className="content">
           <div className="editor-container">
-            <div className="editor-title">{fileName}</div>
+            <div class="editor-header">
+              <div className="editor-title">{fileName}</div>
+              <div class="run-button" onClick={runCode}>Run</div>
+            </div>
             <MonacoEditor
               ref={editorRef}
               height="80vh"
@@ -172,10 +176,11 @@ function Editor() {
               }}
               value={codeEditor}
             />
-            <button className="run-button" onClick={runCode}>Run</button>
           </div>
           <div className="output-container">
-            <div className="output-title">output</div>
+            <div className="output-header">
+              <div className="output-title">output</div>
+            </div>
             <div className="output">{output}</div>
           </div>
         </div>

@@ -16,21 +16,6 @@ const server = http.createServer(app);
 const io = socketIo(server);
 let fileNameValue = "";
 
-io.on('connection', (socket) => {
-
-    socket.on('code-change', (data) => {
-        socket.broadcast.emit('code-change', data);
-    });
-
-    socket.emit('online-users', )
-
-    socket.emit('file-name', fileNameValue);
-
-    socket.on('disconnect', () => {
-        //
-    });
-});
-
 const url = 'mongodb://localhost:27017';
 const dbName = 'Authentication';
 
@@ -67,18 +52,80 @@ const isAuthenticated = (req, res, next) => {
     } else {
         res.status(401).json({ success: false, message: 'Unauthorized' });
     }
-}
+};
 
-const getOnlineUsers = async (roomCode) => {
-    const client = new MongoClient(url);
-    await client.connect();
-    const db = client.db(dbName);
-    const roomsCollection = db.collection('Rooms');
-    const room = await roomsCollection.findOne({ roomCode });
-    const users = room.users;
-    client.close();
-    return users;
-}
+io.on('connection', (socket) => {
+
+    const roomCode = socket.handshake.query.roomCode;
+
+    socket.on('join-room', async (roomCode) => {
+        socket.join(roomCode); // Join the room
+
+        // Fetch the user list from the database
+        const client = new MongoClient(url);
+        await client.connect();
+        const db = client.db(dbName);
+        const roomsCollection = db.collection('Rooms');
+
+        const room = await roomsCollection.findOne({ roomCode });
+        if (room) {
+
+            let users = room.users;
+
+            // convert users list of ids to usernames
+            const usersCollection = db.collection('Users');
+            for (let i = 0; i < users.length; i++) {
+                const user = await usersCollection.findOne({ _id: users[i] });
+                users[i] = user.username;
+            }    
+
+            // Emit the user list to the newly connected user
+            socket.emit('user-list', users);
+            // Optionally, emit the user list to all clients in the room
+            socket.to(roomCode).emit('user-list', users);
+        }
+
+        client.close();
+    });
+
+    socket.on('code-change', (data) => {
+        socket.broadcast.emit('code-change', data);
+    });
+
+    socket.on('cursor-change', (data) => {
+        socket.broadcast.emit('cursor-change', data);
+    })
+
+    socket.emit('file-name', fileNameValue);
+
+    socket.on('leave-room', async () => {
+        const roomCode = socket.handshake.query.roomCode;
+        const client = new MongoClient(url);
+        await client.connect();
+        const db = client.db(dbName);
+        const roomsCollection = db.collection('Rooms');
+ 
+        const room = await roomsCollection.findOne({ roomCode });
+        if (room) {
+
+            let users = room.users;
+
+            // convert users list of ids to usernames
+            const usersCollection = db.collection('Users');
+            for (let i = 0; i < users.length; i++) {
+                const user = await usersCollection.findOne({ _id: users[i] });
+                users[i] = user.username;
+            }    
+
+            // Emit the user list to the newly connected user
+            socket.emit('user-list', users);
+            // Optionally, emit the user list to all clients in the room
+            socket.to(roomCode).emit('user-list', users);
+        }
+ 
+        client.close();
+    });
+});
 
 app.get('/room-code', isAuthenticated, (req, res) => {
   res.sendFile(path.join(__dirname + '/client/build/index.html'));
@@ -181,10 +228,19 @@ app.post('/add-to-room/:roomCode', async (req, res) => {
                       { $addToSet: { users: user } }
                   );
               }
+              let users = room.users;
+              // convert users list of ids to usernames
+              const usersCollection = db.collection('Users');
+              for (let i = 0; i < users.length; i++) {
+                const user = await usersCollection.findOne({ _id: users[i] });
+                users[i] = user.username;
+              } 
+              io.to(roomCode).emit('user-list', users); // Emit the user list to all clients in the room
+
           } else {
               // Room does not exist, create it and add the user as admin, users list is empty
               fileNameValue = req.body.fileName;
-              await roomsCollection.insertOne({ roomCode, admin: user, users: [], fileNameValue, roomPassword });
+              await roomsCollection.insertOne({ roomCode, admin: user, users: [user], fileNameValue, roomPassword });
           }
           io.emit('file-name', fileNameValue); // Emit the file name to all clients
           res.json({ success: true });
@@ -304,6 +360,17 @@ app.post('/logout', async (req, res) => {
             { $pull: { users: user } }
         );
 
+        const room = await roomsCollection.findOne({ roomCode });
+        let users = room.users;
+
+        // convert users list of ids to usernames
+        const usersCollection = db.collection('Users');
+        for (let i = 0; i < users.length; i++) {
+            const user = await usersCollection.findOne({ _id: users[i] });
+            users[i] = user.username;
+        }
+
+        io.to(roomCode).emit('user-list', users);
         res.json({ success: true });
 
         client.close();

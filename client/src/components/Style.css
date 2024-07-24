@@ -45,9 +45,9 @@ body {
 }
   
 .online-users li button {
-    border-radius: 100%;
+    border-radius: 15px;
     height: 25px;
-    width: 25px;
+    width: 60px;
     background-color: #05F2BA;
     border: none;
     color: #1E2D40;

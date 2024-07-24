@@ -4,6 +4,7 @@ import MonacoEditor from '@monaco-editor/react';
 import io from 'socket.io-client';
 import { useParams } from 'react-router-dom';
 import './Style.css';
+import { debounce } from 'lodash';
 
 const socket = io('http://localhost:3000');
 
@@ -14,6 +15,7 @@ function Editor() {
     const [codeEditor, setCodeEditor] = useState('');
     const [output, setOutput] = useState('');
     const [fileName, setFileName] = useState('');
+    const [users, setUsers] = useState([]);
   
     const runCode = async () => {
       let code = document.querySelector('.editor').innerText;
@@ -63,25 +65,45 @@ function Editor() {
           setCodeEditor(data);
       });
 
+      socket.on('cursor-position', (position) => {
+          editorRef.current.setPosition(position);
+      });
+
       socket.on('file-name', (fileName) => {
           setFileName(fileName + ".py");
       });
 
-      socket.on('disconnect', () => {
-          console.log('Disconnected from WebSocket server');
-      });
-
       return () => {
           socket.off('code-change');
+          socket.off('cursor-position');
           socket.off('file-name');
           socket.off('connect');
-          socket.off('disconnect');
       };
     }, []);
+
+    useEffect(() => {
+      socket.emit('join-room', roomCode);
+        
+      // Listen for the user list from the server
+      socket.on('user-list', (users) => {
+          console.log("Users: ", users);
+          setUsers(users);
+      });
+  
+      return () => {
+          socket.off('user-list');
+      };
+    }, [roomCode]);
+
 
   const handleChange = (newValue) => {
       socket.emit('code-change', newValue);
   };
+
+  const handleCursorPositionChange = debounce((e) => {
+    console.log("Cursor position: ", e.position);
+    socket.emit('cursor-position', { position: e.position });
+  }, 100); // Adjust debounce time as needed
 
   const editorDidMount = (editor) => {
     console.log('Editor mounted:', editor);
@@ -93,9 +115,9 @@ function Editor() {
         <div className="header-app">
           <h1>Collaborative Python Editor</h1>
           <ul className="online-users">
-            <li><button>A</button></li>
-            <li><button>S</button></li>
-            <li><button>T</button></li>
+              {users.map((user, index) => (
+                  <li key={index}><button>{user}</button></li>
+              ))}
           </ul>
           <button class="log-out" onClick={logOut}>Log out</button>
         </div>
@@ -110,6 +132,7 @@ function Editor() {
               className="editor"
               onChange={handleChange}
               editorDidMount={editorDidMount}
+              onDidChangeCursorPosition={handleCursorPositionChange}
               options={{
                 fontFamily: 'Fira Code, monospace',
                 fontSize: 16,

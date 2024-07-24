@@ -5,13 +5,11 @@ X - ***DONE*** - 2. In Create Room, the user opens a new room (check if room is 
     In Rooms db, a room is created that way, admin is the user created the room. users list is empty
 X - ***DONE*** - 3. In Join Room, the user enters the room-code and room-password and enters the room
     In Rooms db, the user joining is being added to the users list.
-4. Status of user should be saved - online, offline.
-5. Show each of the users' cursor in realtime, each user has a different color
-6. Show list of online users, first letter, hover revel the username
-7. Save for each room, the code. So when the room is reopened, the code remains.
-X - ***DONE*** - 8. Delete the side bar in Editor page and add log-out option.
-X - ***DONE*** - 9. Add error messages
-10. Add rate limit for security reasons.
+4. Show each of the users' cursor in realtime, each user has a different color
+5. Show list of online users, first letter, hover revel the username
+6. Save for each room, the code. So when the room is reopened, the code remains.
+X - ***DONE*** - 7. Delete the side bar in Editor page and add log-out option.
+X - ***DONE*** - 8. Add error messages
 
 Main Room Code page :
 create room button

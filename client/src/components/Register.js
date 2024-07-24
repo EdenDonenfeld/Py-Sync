@@ -26,8 +26,14 @@ function Register() {
     };
 
     const checkUsernameAndPassword = (username, password) => {
-        if (username.length < 6) {
-            return 'Username must be at least 6 characters long';
+        if (username.length < 3) {
+            return 'Username must be at least 3 characters long';
+        }
+        if (username.length > 7) {
+            return 'Username must be at most 7 characters long';
+        }
+        if (!/^[a-zA-Z0-9_]+$/.test(username)) {
+            return 'Username must only contain letters, numbers, and underscores';
         }
         if (password.length < 6) {
             return 'Password must be at least 6 characters long';

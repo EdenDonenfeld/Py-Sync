@@ -49,10 +49,35 @@ function Editor() {
       const data = await response.json();
       if (data.success) {
         console.log("Logged out successfully");
+        await saveCode();
         window.location.href = '/login';
       }
       else {
         console.log("Error logging out");
+      }
+    }
+
+    const saveCode = async () => {
+      let code = document.querySelector('.editor').innerText;
+      code = code.split('\n').filter(line => !/^\d+$/.test(line)).join('\n');
+      code = code.replace(/\u00a0/g, ' ');
+      console.log(`Code: ${code}`);
+
+      const response = await fetch('/save-code', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ code, roomCode }),
+      });
+
+      const data = await response.json();
+      console.log("Data: ", data)
+      if (data.success) {
+        console.log("Code saved successfully");
+      }
+      else {
+        console.log("Error saving code");
       }
     }
 
@@ -65,16 +90,22 @@ function Editor() {
           setCodeEditor(data);
       });
 
+      socket.on('code', (data) => {
+        data = data.replace(/\u00a0/g, ' ');
+        setCodeEditor(data);
+      });
+      
+      socket.on('file-name', (fileName) => {
+        setFileName(fileName + ".py");
+      });
+
       socket.on('cursor-position', (position) => {
           editorRef.current.setPosition(position);
       });
 
-      socket.on('file-name', (fileName) => {
-          setFileName(fileName + ".py");
-      });
-
       return () => {
           socket.off('code-change');
+          socket.off('code');
           socket.off('cursor-position');
           socket.off('file-name');
           socket.off('connect');
@@ -119,7 +150,9 @@ function Editor() {
                   <li key={index}><button>{user}</button></li>
               ))}
           </ul>
-          <button class="log-out" onClick={logOut}>Log out</button>
+          <div class="side-btns">
+            <button class="log-out" onClick={logOut}>Log out</button>
+          </div>
         </div>
         <div className="content">
           <div className="editor-container">

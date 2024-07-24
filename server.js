@@ -77,12 +77,14 @@ io.on('connection', (socket) => {
             for (let i = 0; i < users.length; i++) {
                 const user = await usersCollection.findOne({ _id: users[i] });
                 users[i] = user.username;
-            }    
+            }
 
             // Emit the user list to the newly connected user
             socket.emit('user-list', users);
             // Optionally, emit the user list to all clients in the room
             socket.to(roomCode).emit('user-list', users);
+            socket.emit('file-name', room.fileNameValue);
+            socket.emit('code', room.code);
         }
 
         client.close();
@@ -96,7 +98,7 @@ io.on('connection', (socket) => {
         socket.broadcast.emit('cursor-change', data);
     })
 
-    socket.emit('file-name', fileNameValue);
+    // socket.emit('file-name', fileNameValue);
 
     socket.on('leave-room', async () => {
         const roomCode = socket.handshake.query.roomCode;
@@ -228,6 +230,7 @@ app.post('/add-to-room/:roomCode', async (req, res) => {
                       { $addToSet: { users: user } }
                   );
               }
+
               let users = room.users;
               // convert users list of ids to usernames
               const usersCollection = db.collection('Users');
@@ -240,7 +243,7 @@ app.post('/add-to-room/:roomCode', async (req, res) => {
           } else {
               // Room does not exist, create it and add the user as admin, users list is empty
               fileNameValue = req.body.fileName;
-              await roomsCollection.insertOne({ roomCode, admin: user, users: [user], fileNameValue, roomPassword });
+              await roomsCollection.insertOne({ roomCode, admin: user, users: [user], fileNameValue, roomPassword, code: '' });
           }
           io.emit('file-name', fileNameValue); // Emit the file name to all clients
           res.json({ success: true });
@@ -371,6 +374,34 @@ app.post('/logout', async (req, res) => {
         }
 
         io.to(roomCode).emit('user-list', users);
+        res.json({ success: true });
+
+        client.close();
+    } catch (error) {
+        console.error('Error:', error);
+        res.status(500).json({ success: false, message: 'Internal server error' });
+    }
+});
+
+app.post('/save-code', async (req, res) => {
+    const { code, roomCode } = req.body;
+    const user = req.session.user && req.session.user.id;
+
+    if (!user) {
+        return res.status(401).json({ success: false, message: 'Unauthorized' });
+    }
+
+    try {
+        const client = new MongoClient(url);
+        await client.connect();
+        const db = client.db(dbName);
+        const roomsCollection = db.collection('Rooms');
+
+        await roomsCollection.updateOne(
+            { roomCode },
+            { $set: { code } }
+        );
+
         res.json({ success: true });
 
         client.close();

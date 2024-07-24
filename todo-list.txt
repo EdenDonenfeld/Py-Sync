@@ -6,7 +6,7 @@ X - ***DONE*** - 2. In Create Room, the user opens a new room (check if room is 
 X - ***DONE*** - 3. In Join Room, the user enters the room-code and room-password and enters the room
     In Rooms db, the user joining is being added to the users list.
 4. Show each of the users' cursor in realtime, each user has a different color
-5. Show list of online users, first letter, hover revel the username
+X - ***DONE*** - 5. Show list of online users, show username
 6. Save for each room, the code. So when the room is reopened, the code remains.
 X - ***DONE*** - 7. Delete the side bar in Editor page and add log-out option.
 X - ***DONE*** - 8. Add error messages

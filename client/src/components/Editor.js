@@ -18,13 +18,9 @@ function Editor() {
     const [users, setUsers] = useState([]);
   
     const runCode = async () => {
-      let code = document.querySelector('.editor').innerText;
-      console.log(`Code: ${code}`);
-      
+      let code = document.querySelector('.editor').innerText;    
       code = code.split('\n').filter(line => !/^\d+$/.test(line)).join('\n');
-  
-      console.log(`Code: ${code}`);
-  
+    
       const response = await fetch('/run-code', {
         method: 'POST',
         headers: {
@@ -34,7 +30,6 @@ function Editor() {
       });
   
       const data = await response.json();
-      console.log("Data: ", data)
       setOutput(data.output);
       await saveCode();
     }
@@ -62,7 +57,6 @@ function Editor() {
       let code = document.querySelector('.editor').innerText;
       code = code.split('\n').filter(line => !/^\d+$/.test(line)).join('\n');
       code = code.replace(/\u00a0/g, ' ');
-      console.log(`Code: ${code}`);
 
       const response = await fetch('/save-code', {
         method: 'POST',
@@ -73,7 +67,6 @@ function Editor() {
       });
 
       const data = await response.json();
-      console.log("Data: ", data)
       if (data.success) {
         console.log("Code saved successfully");
       }
@@ -118,7 +111,6 @@ function Editor() {
         
       // Listen for the user list from the server
       socket.on('user-list', (users) => {
-          console.log("Users: ", users);
           setUsers(users);
       });
   
@@ -181,7 +173,11 @@ function Editor() {
             <div className="output-header">
               <div className="output-title">output</div>
             </div>
-            <div className="output">{output}</div>
+            <div className="output">
+              {output.split('\n').map((line, index) => (
+                            <div key={index}>{line}</div>
+                        ))}
+            </div>
           </div>
         </div>
       </div>

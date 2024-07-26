@@ -1,2 +1,1 @@
-Factorial of 5 (iterative): 120
-Factorial of 5 (recursive): 120
+55

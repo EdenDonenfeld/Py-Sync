@@ -1,16 +1,7 @@
-# Function to calculate factorial iteratively
-def factorial_iterative(n):
-    result = 1
-    for i in range(1, n + 1):
-        result *= i
-    return result
-# Function to calculate factorial recursively
-def factorial_recursive(n):
-    if n == 0:
-        return 1
+# דוגמה לקוד פייתון שניתן להריץ בעורך
+def fibonacci(n):
+    if n <= 1:
+        return n
     else:
-        return n * factorial_recursive(n - 1)
-# Test the functions
-number = 5
-print(f"Factorial of {number} (iterative): {factorial_iterative(number)}")
-print(f"Factorial of {number} (recursive): {factorial_recursive(number)}")
+        return fibonacci(n-1) + fibonacci(n-2)
+print(fibonacci(10)) # פלט: 55

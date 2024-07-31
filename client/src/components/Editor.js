@@ -4,7 +4,6 @@ import MonacoEditor from '@monaco-editor/react';
 import io from 'socket.io-client';
 import { useParams } from 'react-router-dom';
 import './Style.css';
-import { debounce } from 'lodash';
 
 const socket = io('http://localhost:3000');
 
@@ -44,12 +43,11 @@ function Editor() {
       });
       const data = await response.json();
       if (data.success) {
-        console.log("Logged out successfully");
         await saveCode();
         window.location.href = '/login';
       }
       else {
-        console.log("Error logging out");
+        console.error("Error logging out");
       }
     }
 
@@ -67,17 +65,11 @@ function Editor() {
       });
 
       const data = await response.json();
-      if (data.success) {
-        console.log("Code saved successfully");
-      }
-      else {
-        console.log("Error saving code");
-      }
     }
 
     useEffect(() => {
       socket.on('connect', () => {
-          console.log('Connected to WebSocket server');
+          // console.log('Connected to server');
       });
 
       socket.on('code-change', (data) => {
@@ -124,13 +116,7 @@ function Editor() {
       socket.emit('code-change', newValue);
   };
 
-  const handleCursorPositionChange = debounce((e) => {
-    console.log("Cursor position: ", e.position);
-    socket.emit('cursor-position', { position: e.position });
-  }, 100); // Adjust debounce time as needed
-
   const editorDidMount = (editor) => {
-    console.log('Editor mounted:', editor);
     editorRef.current = editor;
   };
 
@@ -161,7 +147,6 @@ function Editor() {
               className="editor"
               onChange={handleChange}
               editorDidMount={editorDidMount}
-              onDidChangeCursorPosition={handleCursorPositionChange}
               options={{
                 fontFamily: 'Fira Code, monospace',
                 fontSize: 16,

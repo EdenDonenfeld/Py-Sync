@@ -46,7 +46,6 @@ app.use(session({
 }));
 
 const isAuthenticated = (req, res, next) => {
-    console.log(req.session)
     if (req.session.user) {
         next();
     } else {
@@ -329,7 +328,6 @@ app.post('/login', async (req, res) => {
         } else {
             if (user.hashedPassword === hashedPassword) {
                 req.session.user = { id: user._id, username: user.username };
-                console.log(req.session.user)
                 res.json({ success: true, message: 'User logged in successfully' });
             } else {
                 res.json({ success: false, message: 'Invalid password' });

@@ -72,7 +72,6 @@ function CreateRoom() {
 
     const handleGenerateButtonClick = async () => {
         const generatedRoomCode = await generateRoomCode();
-        console.log(`Room Code: ${generatedRoomCode}`);
         setRoomCode(generatedRoomCode);
         roomCodeInputRef.current.value = generatedRoomCode; // Update the input field with the new room code
     };
@@ -104,9 +103,7 @@ function CreateRoom() {
                 body: JSON.stringify({ fileName, roomPassword })
             });
             const data = await response.json();
-            console.log('Create room response:', data);
             if (data.success) {
-                console.log('Creating room with code:', roomCode);
                 window.location.href = `/room/${roomCode}`;
             } else {
                 setErrorMessage('Room code must be 6 digits');

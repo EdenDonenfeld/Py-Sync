@@ -19,7 +19,6 @@ function JoinRoom() {
                 body: JSON.stringify({ roomPassword })
             });
             const data = await response.json();
-            console.log('Check room code response:', data);
             
             if (!data.roomAvailable) {
                 setErrorMessage('Room code does not exist');
@@ -80,7 +79,6 @@ function JoinRoom() {
                 body: JSON.stringify({ fileName: "", roomPassword })
             });
             const data = await response.json();
-            console.log('Join room response:', data);
             if (data.success) {
                 console.log('Joining room with code:', roomCode);
                 window.location.href = `/room/${roomCode}`;

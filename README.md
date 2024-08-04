@@ -34,9 +34,17 @@ node server.js
 ```
 
 ## Usage
-1. *Register/Login:* Create an account or log in with existing credentials.
-2. *Create/Join Room:* Create a new room or join an existing one by entering the room ID.
-3. *Collaborate:* Start coding with others in real-time. See the changes made by others instantly.
+*Register/Login:* Create an account or log in with existing credentials.
+
+<img width="308" alt="image" src="https://github.com/user-attachments/assets/c55ac45d-ad1c-479c-96c9-af76544c01aa">
+
+*Create/Join Room:* Create a new room or join an existing one by entering the room ID.
+
+<img width="302" alt="image" src="https://github.com/user-attachments/assets/0a863474-c26b-491a-8748-94a2b9b34ad1">
+
+*Collaborate:* Start coding with others in real-time. See the changes made by others instantly.
+
+<img width="937" alt="image" src="https://github.com/user-attachments/assets/32f6f2f8-665b-4b7b-8199-02f6c9ae3861">
 
 
 ## License
